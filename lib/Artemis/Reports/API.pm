@@ -1,46 +1,56 @@
 package Artemis::Reports::API;
 
+use 5.010;
+
 use strict;
 use warnings;
 
 our $VERSION = '2.010001';
 
 use parent 'Net::Server::PreForkSimple';
-
-use Data::Dumper;
 use Artemis::Model 'model';
-use DateTime::Format::Natural;
+use Data::Dumper;
 
 sub process_request
 {
-        my $self = shift;
+        my ($self) = @_;
 
-        $self->{payload} = '';
+        $self->{input} = '';
         while (<STDIN>) {
-                $self->{payload} .= $_ ;
+                $self->{input} .= $_ ;
         }
 }
 
-sub evaluate_input
+sub handle_input
 {
-        my ($self) = shift;
+        my ($self, $cmd, $payload, @args) = @_;
 
-        my $command_line = $self->{payload} =~ s/^(.*?\n)/;
+}
 
-        open (PAYLOAD, ">", "/tmp/payload.tmp") or die "Cannot open payload file";
-        print PAYLOAD $self->{payload};
-        close PAYLOAD;
+sub handle_upload
+{
+        my ($self, $payload, $report_id, $filename) = @_;
 
-        open (CMD, ">", "/tmp/cmd.tmp") or die "Cannot open cmd file";
-        print CMD $command_line;
-        close CMD;
+
+        my $reportfile = model('ReportsDB')->resultset('ReportFile')->new({ report_id   => $report_id,
+                                                                            filename    => $filename,
+                                                                            filecontent => $payload,
+                                                                          });
+        $reportfile->insert;
 }
 
 sub post_process_request_hook
 {
         my ($self) = shift;
 
-        $self->evaluate_input();
+        # split cmd and args from payload
+        my ($cmdline, $payload) = split (/\n/, $self->{input}, 2);
+        my (undef, $cmd, @args) = split (/\s+/, $cmdline);
+
+        no strict 'refs';
+        my $handle = "handle_$cmd";
+        $self->$handle ($payload, @args);
+
         say "Thanks.";
 }
 
