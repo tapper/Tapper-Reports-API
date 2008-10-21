@@ -1,0 +1,6 @@
+Artemis-Reports-API-*.*.tar.gz
+^Artemis-Reports-API-*.*$
+_build
+blib
+^Build$
+MANIFEST.bak
