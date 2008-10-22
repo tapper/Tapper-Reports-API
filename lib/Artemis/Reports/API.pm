@@ -43,6 +43,7 @@ sub handle_upload
 sub _split_cmdline
 {
         my ($cmdline) = @_;
+        $cmdline =~ s/^\s+//;
         my @list = split (/\s+/, $cmdline);
         shift @list; # no shebang
         return @list;

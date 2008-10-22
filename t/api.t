@@ -13,9 +13,25 @@ my @cmdlines = (
                 '#! upload 552 /tmp/foo.bar application/octet-stream   ',
                 '#!     upload      552      /tmp/foo.bar   application/octet-stream',
                 '#!     upload      552      /tmp/foo.bar   application/octet-stream    ',
+                '  #! upload 552 /tmp/foo.bar application/octet-stream',
+                '  #! upload 552 /tmp/foo.bar application/octet-stream   ',
+                '  #!     upload      552      /tmp/foo.bar   application/octet-stream',
+                '  #!     upload      552      /tmp/foo.bar   application/octet-stream    ',
                );
 
-plan tests => 2*4*@cmdlines;
+my @cmdlines2 = (
+                 # trailing spaces matter!
+                 '#! upload 552 /tmp/foo.bar',
+                 '#! upload 552 /tmp/foo.bar   ',
+                 '#!     upload      552      /tmp/foo.bar',
+                 '#!     upload      552      /tmp/foo.bar    ',
+                 '  #! upload 552 /tmp/foo.bar',
+                 '  #! upload 552 /tmp/foo.bar   ',
+                 '  #!     upload      552      /tmp/foo.bar',
+                 '  #!     upload      552      /tmp/foo.bar    ',
+                );
+
+plan tests => 4*@cmdlines + 4*@cmdlines2;
 
 my $i = 0;
 foreach my $cmdline (@cmdlines) {
@@ -31,15 +47,7 @@ foreach my $cmdline (@cmdlines) {
 
 # -- same but without optional content type --
 
-@cmdlines = (
-             # trailing spaces matter!
-             '#! upload 552 /tmp/foo.bar',
-             '#! upload 552 /tmp/foo.bar   ',
-             '#!     upload      552      /tmp/foo.bar',
-             '#!     upload      552      /tmp/foo.bar    ',
-            );
-
-foreach my $cmdline (@cmdlines) {
+foreach my $cmdline (@cmdlines2) {
         my ($cmd, $id, $file, $contenttype) = Artemis::Reports::API::_split_cmdline( $cmdline );
 
         is($cmd,         "upload",                   "cmd $i");
