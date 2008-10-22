@@ -40,13 +40,21 @@ sub handle_upload
         $reportfile->insert;
 }
 
+sub _split_cmdline
+{
+        my ($cmdline) = @_;
+        my @list = split (/\s+/, $cmdline);
+        shift @list; # no shebang
+        return @list;
+}
+
 sub post_process_request_hook
 {
         my ($self) = shift;
 
         # split cmd and args from payload
         my ($cmdline, $payload) = split (/\n/, $self->{input}, 2);
-        my (undef, $cmd, @args) = split (/\s+/, $cmdline);
+        my ($cmd, @args) = _split_cmdline( $cmdline );
 
         no strict 'refs';
         my $handle = "handle_$cmd";
