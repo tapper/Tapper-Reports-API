@@ -31,11 +31,10 @@ sub handle_upload
 {
         my ($self, $payload, $report_id, $filename, $contenttype) = @_;
 
-
         my $reportfile = model('ReportsDB')->resultset('ReportFile')->new({ report_id   => $report_id,
                                                                             filename    => $filename,
                                                                             filecontent => $payload,
-                                                                            contenttype => $contenttype || 'application/octet-stream',
+                                                                            contenttype => $contenttype || 'plain', # 'application/octet-stream',
                                                                           });
         $reportfile->insert;
 }
