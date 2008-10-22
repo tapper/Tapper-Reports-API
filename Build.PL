@@ -22,7 +22,6 @@ my $builder = Module::Build->new
                   'Net::Server::PreForkSimple' => 0,
                  },
      add_to_cleanup     => [ 'Artemis-Reports-API-*' ],
-     create_makefile_pl => 'traditional',
     );
 
 $builder->create_build_script();
