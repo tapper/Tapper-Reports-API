@@ -3,6 +3,11 @@
 use strict;
 use warnings;
 
+BEGIN {
+        use Class::C3;
+        use MRO::Compat;
+}
+
 use Test::More;
 use Data::Dumper;
 use Artemis::Reports::API;

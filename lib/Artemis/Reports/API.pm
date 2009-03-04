@@ -8,6 +8,8 @@ use warnings;
 our $VERSION = '2.010001';
 
 use parent 'Net::Server::PreForkSimple';
+
+use Artemis::Reports::DPath::Mason;
 use Artemis::Model 'model';
 use Data::Dumper;
 
@@ -37,6 +39,14 @@ sub handle_upload
                                                                             contenttype => $contenttype || 'plain', # 'application/octet-stream',
                                                                           });
         $reportfile->insert;
+}
+
+sub handle_mason
+{
+        my ($self, $payload) = @_;
+
+        my $mason = new Artemis::Reports::DPath::Mason;
+        print STDERR $mason->render(template => $payload);
 }
 
 sub _split_cmdline
