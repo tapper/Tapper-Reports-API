@@ -14,4 +14,4 @@ META.yml
 t/artemis_schema_hardwaredb_test.sqlite
 t/artemis_schema_reportsdb_test.sqlite
 t/artemis_schema_testrundb_test.sqlite
-
+test-artemis-reports-api-daemon-test.pid

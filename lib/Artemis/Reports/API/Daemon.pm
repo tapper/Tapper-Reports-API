@@ -17,6 +17,7 @@ has port   => (is => 'rw', isa => 'Int', default => 7358);
 after start => sub {
                     my $self = shift;
 
+                    say STDERR "Booh!";
                     return unless $self->is_daemon;
 
                     $self->initialize_server;
@@ -44,6 +45,7 @@ method run
         my ($command) = @ARGV || @_;
         say STDERR "Boo boo 1! command = $command";
         return unless $command && grep /^$command$/, qw(start status restart stop);
+        say STDERR "Boo boo 2!";
         $self->$command;
         say $self->status_message;
 }
