@@ -16,7 +16,7 @@ use Artemis::Schema::TestTools;
 use Test::Fixture::DBIC::Schema;
 use Artemis::Reports::API::Daemon;
 
-plan tests => 3;
+plan tests => 1;
 
 # ----- Prepare test db -----
 
@@ -50,21 +50,6 @@ my $reportsdb_schema = Artemis::Schema::ReportsDB->connect($dsn,
                                                             ignore_version => 1
                                                            }
                                                           );
-my $reportfile = $reportsdb_schema->resultset('ReportFile')->new({ report_id   => 23,
-                                                                   filename    => 'foo.txt',
-                                                                   filecontent => "aaaaa\nbbbbb\nccccc\n",
-                                                                   contenttype => 'plain',
-                                                                 });
-$reportfile->insert;
-$reportfile = $reportsdb_schema->resultset('ReportFile')->new({ report_id   => 23,
-                                                                filename    => 'bar.txt',
-                                                                filecontent => "AAAAA\nBBBBB\nCCCCC\n",
-                                                                contenttype => 'plain',
-                                                              });
-$reportfile->insert;
-
-is( $reportsdb_schema->resultset('Report')->count, 3,  "report count" );
-is( $reportsdb_schema->resultset('ReportFile')->count, 2,  "reportfile count" );
 
 my $cmd = "( echo '#! upload 23 $payload_file' ; cat $payload_file ) | netcat -w1 localhost $port";
 my $res = `$cmd`;
@@ -74,7 +59,7 @@ my $res = `$cmd`;
 # wait, because the server is somewhat slow until the upload is visible in DB
 sleep $grace_period;
 
-is( $reportsdb_schema->resultset('ReportFile')->count, 3,  "reportfile count +1" );
+is( $reportsdb_schema->resultset('ReportFile')->count, 1,  "new reportfile count" );
 
 # ----- Close server -----
 $api->run("stop");
