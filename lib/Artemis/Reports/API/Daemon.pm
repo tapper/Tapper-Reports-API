@@ -41,7 +41,8 @@ method initialize_server
 
 method run
 {
-        my ($command) = @ARGV;
+        my ($command) = @ARGV || @_;
+        say STDERR "Boo boo 1! command = $command";
         return unless $command && grep /^$command$/, qw(start status restart stop);
         $self->$command;
         say $self->status_message;
