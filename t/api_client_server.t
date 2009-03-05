@@ -16,7 +16,7 @@ use Artemis::Schema::TestTools;
 use Test::Fixture::DBIC::Schema;
 use Artemis::Reports::API::Daemon;
 
-plan tests => 1;
+plan tests => 2;
 
 # ----- Prepare test db -----
 
@@ -60,6 +60,17 @@ my $res = `$cmd`;
 sleep $grace_period;
 
 is( $reportsdb_schema->resultset('ReportFile')->count, 1,  "new reportfile count" );
+
+my $filecontent = $reportsdb_schema->resultset('ReportFile')->search({})->first->filecontent;
+my $expected;
+{
+        local $/;
+        open my $F, "<", $payload_file;
+        $expected = <$F>;
+        close $F;
+}
+is( $filecontent, $expected, "upload worked");
+
 
 # ----- Close server -----
 $api->run("stop");
