@@ -1,5 +1,6 @@
 #! /usr/bin/env perl
 
+use 5.010;
 use strict;
 use warnings;
 
@@ -15,7 +16,7 @@ use Test::Fixture::DBIC::Schema;
 use Artemis::Reports::API::Daemon;
 use Cwd;
 
-plan tests => 1;
+plan tests => 3;
 
 # ----- Prepare test db -----
 
@@ -23,22 +24,63 @@ plan tests => 1;
 construct_fixture( schema  => reportsdb_schema, fixture => 't/fixtures/reportsdb/report.yml' );
 # -----------------------------------------------------------------------------------------------------------------
 
+my $port = 54321;
+my $payload_file = 't/test_payload.txt';
+my $grace_period = 2;
+
 # ----- Start server -----
+$ENV{MX_DAEMON_STDOUT} = getcwd."/test-artemis_reports_api_daemon_stdout.log";
+$ENV{MX_DAEMON_STDERR} = getcwd."/test-artemis_reports_api_daemon_stderr.log";
 
 my $api = new Artemis::Reports::API::Daemon (
+                                             basedir => getcwd,
                                              pidfile => getcwd.'/test-artemis-reports-api-daemon-test.pid',
-                                             port    => 54321,
+                                             port    => $port,
                                             );
 $api->run("start");
-print STDERR "Start\n";
+sleep $grace_period;
 
 # ----- Client communication -----
 
+my $dsn = Artemis::Config->subconfig->{test}{database}{ReportsDB}{dsn};
+diag "dsn: $dsn";
+my $reportsdb_schema = Artemis::Schema::ReportsDB->connect($dsn,
+                                                           Artemis::Config->subconfig->{test}{database}{ReportsDB}{username},
+                                                           Artemis::Config->subconfig->{test}{database}{ReportsDB}{password},
+                                                           {
+                                                            ignore_version => 1
+                                                           }
+                                                          );
+my $reportfile = $reportsdb_schema->resultset('ReportFile')->new({ report_id   => 23,
+                                                                   filename    => 'foo.txt',
+                                                                   filecontent => "aaaaa\nbbbbb\nccccc\n",
+                                                                   contenttype => 'plain',
+                                                                 });
+$reportfile->insert;
+$reportfile = $reportsdb_schema->resultset('ReportFile')->new({ report_id   => 23,
+                                                                filename    => 'bar.txt',
+                                                                filecontent => "AAAAA\nBBBBB\nCCCCC\n",
+                                                                contenttype => 'plain',
+                                                              });
+$reportfile->insert;
+
+use Cwd;
+say "***************** getcwd: ".getcwd;
+diag $reportsdb_schema->get_db_version;
+is( $reportsdb_schema->resultset('Report')->count, 3,  "report count" );
+is( $reportsdb_schema->resultset('ReportFile')->count, 2,  "reportfile count" );
+
+say "***************** getcwd: ".getcwd;
+my $cmd = "( echo '#! upload 23 $payload_file' ; cat $payload_file ) | netcat -w1 localhost $port";
+my $res = `$cmd`;
+say "***************** getcwd: ".getcwd;
+
 # ----- Check DB content -----
-sleep 15;
-ok(1, "dummy");
+
+# wait, because the server is somewhat slow until the upload is visible in DB
+sleep $grace_period;
+
+is( $reportsdb_schema->resultset('ReportFile')->count, 3,  "reportfile count +1" );
 
 # ----- Close server -----
 $api->run("stop");
-
-
