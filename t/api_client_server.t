@@ -9,12 +9,12 @@ BEGIN {
         use MRO::Compat;
 }
 
+use Cwd;
 use Test::More;
 use Data::Dumper;
 use Artemis::Schema::TestTools;
 use Test::Fixture::DBIC::Schema;
 use Artemis::Reports::API::Daemon;
-use Cwd;
 
 plan tests => 3;
 
@@ -43,7 +43,6 @@ sleep $grace_period;
 # ----- Client communication -----
 
 my $dsn = Artemis::Config->subconfig->{test}{database}{ReportsDB}{dsn};
-diag "dsn: $dsn";
 my $reportsdb_schema = Artemis::Schema::ReportsDB->connect($dsn,
                                                            Artemis::Config->subconfig->{test}{database}{ReportsDB}{username},
                                                            Artemis::Config->subconfig->{test}{database}{ReportsDB}{password},
@@ -64,16 +63,11 @@ $reportfile = $reportsdb_schema->resultset('ReportFile')->new({ report_id   => 2
                                                               });
 $reportfile->insert;
 
-use Cwd;
-say "***************** getcwd: ".getcwd;
-diag $reportsdb_schema->get_db_version;
 is( $reportsdb_schema->resultset('Report')->count, 3,  "report count" );
 is( $reportsdb_schema->resultset('ReportFile')->count, 2,  "reportfile count" );
 
-say "***************** getcwd: ".getcwd;
 my $cmd = "( echo '#! upload 23 $payload_file' ; cat $payload_file ) | netcat -w1 localhost $port";
 my $res = `$cmd`;
-say "***************** getcwd: ".getcwd;
 
 # ----- Check DB content -----
 
