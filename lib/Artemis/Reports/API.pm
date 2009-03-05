@@ -7,7 +7,7 @@ use warnings;
 
 our $VERSION = '2.010001';
 
-use parent 'Net::Server::PreForkSimple';
+use parent 'Net::Server::Fork';
 
 use Artemis::Reports::DPath::Mason;
 use Artemis::Model 'model';
