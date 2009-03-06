@@ -16,25 +16,23 @@ sub process_request
 {
         my ($self) = @_;
 
-        $self->{input} = '';
-        while (<STDIN>) {
-                $self->{input} .= $_ ;
-        }
-}
-
-sub handle_input
-{
-        my ($self, $cmd, $payload, @args) = @_;
-
+        $self->{cmdline} = <STDIN>;
+        my ($cmd, @args) = _split_cmdline( $self->{cmdline} );
+        no strict 'refs';
+        my $handle = "handle_$cmd";
+        $self->$handle (@args);
 }
 
 sub handle_upload
 {
-        my ($self, $payload, $report_id, $filename, $contenttype) = @_;
+        my ($self, $report_id, $filename, $contenttype) = @_;
+
+        $self->{payload} = '';
+        $self->{payload} .= $_ while <STDIN>;
 
         my $reportfile = model('ReportsDB')->resultset('ReportFile')->new({ report_id   => $report_id,
                                                                             filename    => $filename,
-                                                                            filecontent => $payload,
+                                                                            filecontent => $self->{payload},
                                                                             contenttype => $contenttype || 'plain', # 'application/octet-stream',
                                                                           });
         $reportfile->insert;
@@ -42,10 +40,27 @@ sub handle_upload
 
 sub handle_mason
 {
-        my ($self, $payload) = @_;
+        my ($self, @args) = @_;
 
-        my $mason = new Artemis::Reports::DPath::Mason;
-        print STDERR $mason->render(template => $payload);
+        my $EOFMARKER;
+        $EOFMARKER = $1 if $args[-1] =~ /<<(.*)/;
+
+ READTEMPLATE:
+
+        my $line;
+        $self->{payload} = '';
+        while ($line = <STDIN>)
+        {
+                last if ($line eq $EOFMARKER);
+                $self->{payload} .= $line;
+        }
+
+ COMPILETEMPLATE:
+
+        my $mason  = new Artemis::Reports::DPath::Mason;
+        my $answer = $mason->render(template => $self->{payload});
+
+        print $answer;
 }
 
 sub _split_cmdline
@@ -60,17 +75,7 @@ sub _split_cmdline
 
 sub post_process_request_hook
 {
-        my ($self) = shift;
-
-        # split cmd and args from payload
-        my ($cmdline, $payload) = split (/\n/, $self->{input}, 2);
-        my ($cmd, @args) = _split_cmdline( $cmdline );
-
-        no strict 'refs';
-        my $handle = "handle_$cmd";
-        $self->$handle ($payload, @args);
-
-        say "Thanks.";
+        my ($self) = @_;
 }
 
 1;
