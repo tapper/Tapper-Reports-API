@@ -1,7 +1,6 @@
 package Artemis::Reports::API;
 
 use 5.010;
-
 use strict;
 use warnings;
 
