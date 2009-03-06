@@ -16,8 +16,8 @@ sub process_request
 {
         my ($self) = @_;
 
-        $self->{cmdline} = <STDIN>;
-        my ($cmd, @args) = _split_cmdline( $self->{cmdline} );
+        my $cmdline = <STDIN>;
+        my ($cmd, @args) = _split_cmdline( $cmdline );
         no strict 'refs';
         my $handle = "handle_$cmd";
         $self->$handle (@args);
@@ -27,12 +27,12 @@ sub handle_upload
 {
         my ($self, $report_id, $filename, $contenttype) = @_;
 
-        $self->{payload} = '';
-        $self->{payload} .= $_ while <STDIN>;
+        my $payload = '';
+        $payload .= $_ while <STDIN>;
 
         my $reportfile = model('ReportsDB')->resultset('ReportFile')->new({ report_id   => $report_id,
                                                                             filename    => $filename,
-                                                                            filecontent => $self->{payload},
+                                                                            filecontent => $payload,
                                                                             contenttype => $contenttype || 'plain', # 'application/octet-stream',
                                                                           });
         $reportfile->insert;
@@ -44,23 +44,27 @@ sub handle_mason
 
         my $EOFMARKER;
         $EOFMARKER = $1 if $args[-1] =~ /<<(.*)/;
+        say STDERR "EOFMARKER: $EOFMARKER";
+        return '' unless $EOFMARKER;
 
- READTEMPLATE:
+        # ----- read template -----
 
         my $line;
-        $self->{payload} = '';
+        my $payload = '';
         while ($line = <STDIN>)
         {
-                last if ($line eq $EOFMARKER);
-                $self->{payload} .= $line;
+                last if ($line =~ /^$EOFMARKER\s*$/);
+                $payload .= $line;
+                print STDERR $line;
         }
 
- COMPILETEMPLATE:
+        # ----- compiletemplate -----
 
         my $mason  = new Artemis::Reports::DPath::Mason;
-        my $answer = $mason->render(template => $self->{payload});
+        my $answer = $mason->render(template => $payload);
 
         print $answer;
+        say STDERR $answer;
 }
 
 sub _split_cmdline

@@ -15,8 +15,9 @@ use Data::Dumper;
 use Artemis::Schema::TestTools;
 use Test::Fixture::DBIC::Schema;
 use Artemis::Reports::API::Daemon;
+use File::Slurp 'slurp';
 
-plan tests => 2;
+plan tests => 3;
 
 # ----- Prepare test db -----
 
@@ -26,9 +27,11 @@ construct_fixture( schema  => reportsdb_schema, fixture => 't/fixtures/reportsdb
 
 my $port = 54321;
 my $payload_file = 't/test_payload.txt';
+my $expected_file;
 my $grace_period = 2;
 
-# ----- Start server -----
+# ____________________ START SERVER ____________________
+
 $ENV{MX_DAEMON_STDOUT} = getcwd."/test-artemis_reports_api_daemon_stdout.log";
 $ENV{MX_DAEMON_STDERR} = getcwd."/test-artemis_reports_api_daemon_stderr.log";
 
@@ -40,7 +43,10 @@ my $api = new Artemis::Reports::API::Daemon (
 $api->run("start");
 sleep $grace_period;
 
-# ----- Client communication -----
+
+# ____________________ UPLOAD ____________________
+
+# Client communication
 
 my $dsn = Artemis::Config->subconfig->{test}{database}{ReportsDB}{dsn};
 my $reportsdb_schema = Artemis::Schema::ReportsDB->connect($dsn,
@@ -54,7 +60,7 @@ my $reportsdb_schema = Artemis::Schema::ReportsDB->connect($dsn,
 my $cmd = "( echo '#! upload 23 $payload_file' ; cat $payload_file ) | netcat -w1 localhost $port";
 my $res = `$cmd`;
 
-# ----- Check DB content -----
+# Check DB content
 
 # wait, because the server is somewhat slow until the upload is visible in DB
 sleep $grace_period;
@@ -62,15 +68,23 @@ sleep $grace_period;
 is( $reportsdb_schema->resultset('ReportFile')->count, 1,  "new reportfile count" );
 
 my $filecontent = $reportsdb_schema->resultset('ReportFile')->search({})->first->filecontent;
-my $expected;
-{
-        local $/;
-        open my $F, "<", $payload_file;
-        $expected = <$F>;
-        close $F;
-}
-is( $filecontent, $expected, "upload worked");
+my $expected = slurp $payload_file;
+is( $filecontent, $expected, "upload");
 
 
-# ----- Close server -----
+# ____________________ MASON ____________________
+
+# Client communication
+my $EOFMARKER  = "MASONTEMPLATE".$$;
+$payload_file  = "t/perfmon_tests_planned.mas";
+$expected_file = "t/perfmon_tests_planned.expected";
+$expected      = slurp $expected_file;
+
+$cmd = "( echo '#! mason <<$EOFMARKER' ; cat $payload_file ; echo '$EOFMARKER' ) | netcat -w1 localhost $port";
+$res = `$cmd`;
+is( $res, $expected, "mason 1");
+
+# ____________________ CLOSE SERVER ____________________
+
+#sleep 60;
 $api->run("stop");
