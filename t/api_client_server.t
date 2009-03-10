@@ -28,7 +28,7 @@ construct_fixture( schema  => reportsdb_schema, fixture => 't/fixtures/reportsdb
 my $port = 54321;
 my $payload_file = 't/test_payload.txt';
 my $expected_file;
-my $grace_period = 2;
+my $grace_period = 5;
 
 # ____________________ START SERVER ____________________
 
