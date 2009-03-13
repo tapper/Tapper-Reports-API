@@ -4,3 +4,7 @@ _build
 blib
 ^Build$
 MANIFEST.bak
+test-artemis-reports-api-daemon-test.pid
+test-artemis_reports_api_daemon_stderr.log
+test-artemis_reports_api_daemon_stdout.log
+

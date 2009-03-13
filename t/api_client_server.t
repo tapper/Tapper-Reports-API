@@ -29,6 +29,8 @@ my $port = 54321;
 my $payload_file = 't/test_payload.txt';
 my $expected_file;
 my $grace_period = 5;
+my $expected;
+my $filecontent;
 
 # ____________________ START SERVER ____________________
 
@@ -67,9 +69,11 @@ sleep $grace_period;
 
 is( $reportsdb_schema->resultset('ReportFile')->count, 1,  "new reportfile count" );
 
-my $filecontent = $reportsdb_schema->resultset('ReportFile')->search({})->first->filecontent;
-my $expected = slurp $payload_file;
-is( $filecontent, $expected, "upload");
+eval {
+        $filecontent = $reportsdb_schema->resultset('ReportFile')->search({})->first->filecontent;
+        $expected    = slurp $payload_file;
+        is( $filecontent, $expected, "upload");
+};
 
 
 # ____________________ MASON ____________________
@@ -88,3 +92,4 @@ is( $res, $expected, "mason 1");
 
 #sleep 60;
 $api->run("stop");
+

@@ -4,7 +4,7 @@ use 5.010;
 use strict;
 use warnings;
 
-our $VERSION = '2.010004';
+our $VERSION = '2.010009';
 
 use parent 'Net::Server::Fork';
 
