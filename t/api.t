@@ -9,6 +9,7 @@ BEGIN {
 }
 
 use Test::More;
+use Test::Deep;
 use Data::Dumper;
 use Artemis::Reports::API;
 
@@ -36,7 +37,7 @@ my @cmdlines2 = (
                  '  #!     upload      552      /tmp/foo.bar    ',
                 );
 
-plan tests => 4*@cmdlines + 4*@cmdlines2;
+plan tests => 4*@cmdlines + 4*@cmdlines2 + 1;
 
 my $i = 0;
 foreach my $cmdline (@cmdlines) {
@@ -62,4 +63,12 @@ foreach my $cmdline (@cmdlines2) {
 
         $i++;
 }
+
+my %args = Artemis::Reports::API::_parse_args( qw( debug=1 -affe=zomtec --foo=bar ) );
+cmp_deeply(\%args, {
+                    debug => 1,
+                    affe  => "zomtec",
+                    foo   => "bar",
+                   }, "_parse_args" );
+
 

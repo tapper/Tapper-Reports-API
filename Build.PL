@@ -11,6 +11,7 @@ my $builder = Module::Build->new
      build_requires => {
                         'Cwd'                         => 0,
                         'Test::More'                  => 0,
+                        'Test::Deep'                  => 0,
                         'Artemis::Test'               => '2.010004',
                         'Test::Fixture::DBIC::Schema' => 0,
                        },

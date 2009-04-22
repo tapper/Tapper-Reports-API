@@ -38,6 +38,19 @@ sub handle_upload
         $reportfile->insert;
 }
 
+sub _parse_args {
+        my (@args) = @_;
+
+        my %args = ();
+
+        foreach (@args) {
+                my ($k, $v) = split /=/;
+                $k =~ s/^-+//;
+                $args{$k} = $v;
+        }
+        return %args;
+}
+
 sub handle_mason
 {
         my ($self, @args) = @_;
@@ -46,6 +59,10 @@ sub handle_mason
         $EOFMARKER = $1 if $args[-1] =~ /<<(.*)/;
         say STDERR "EOFMARKER: $EOFMARKER";
         return '' unless $EOFMARKER;
+
+        my %args = _parse_args(@args[0..$#args-1]);
+
+        print STDERR "args = ".Dumper(\%args);
 
         # ----- read template -----
 
@@ -58,9 +75,9 @@ sub handle_mason
                 print STDERR $line;
         }
 
-        # ----- compiletemplate -----
+        # ----- compile template -----
 
-        my $mason  = new Artemis::Reports::DPath::Mason;
+        my $mason  = new Artemis::Reports::DPath::Mason(debug => $args{debug} ? 1 : 0);
         my $answer = $mason->render(template => $payload);
 
         print $answer;
