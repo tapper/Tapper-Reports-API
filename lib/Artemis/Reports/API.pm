@@ -57,13 +57,9 @@ sub handle_mason
 
         my $EOFMARKER;
         $EOFMARKER = $1 if $args[-1] =~ /<<(.*)/;
-        say STDERR "EOFMARKER: $EOFMARKER";
-        say STDERR "Perl: $] $^X";
         return '' unless $EOFMARKER;
 
         my %args = _parse_args(@args[0..$#args-1]);
-
-        print STDERR "args = ".Dumper(\%args);
 
         # ----- read template -----
 
@@ -73,7 +69,6 @@ sub handle_mason
         {
                 last if ($line =~ /^$EOFMARKER\s*$/);
                 $payload .= $line;
-                print STDERR $line;
         }
 
         # ----- compile template -----
@@ -82,7 +77,6 @@ sub handle_mason
         my $answer = $mason->render(template => $payload);
 
         print $answer;
-        say STDERR $answer;
 }
 
 sub _split_cmdline
