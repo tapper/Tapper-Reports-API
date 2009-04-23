@@ -58,6 +58,7 @@ sub handle_mason
         my $EOFMARKER;
         $EOFMARKER = $1 if $args[-1] =~ /<<(.*)/;
         say STDERR "EOFMARKER: $EOFMARKER";
+        say STDERR "Perl: $] $^X";
         return '' unless $EOFMARKER;
 
         my %args = _parse_args(@args[0..$#args-1]);
