@@ -64,11 +64,14 @@ sub handle_mason
 {
         my ($self, @args) = @_;
 
+        my %args = _parse_args(@args[0..$#args-1]);
+
+        # unite '<<' and EOFMARKER when whitespace separated, in order to fix confusion
+        $args[-2] .= pop @args if $args[-2] eq '<<';
+
         my $EOFMARKER;
         $EOFMARKER = $1 if $args[-1] =~ /<<(.*)/;
         return '' unless $EOFMARKER;
-
-        my %args = _parse_args(@args[0..$#args-1]);
 
         # ----- read template -----
 

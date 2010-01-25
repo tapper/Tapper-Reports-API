@@ -17,7 +17,7 @@ use Test::Fixture::DBIC::Schema;
 use Artemis::Reports::API::Daemon;
 use File::Slurp 'slurp';
 
-plan tests => 3;
+plan tests => 4;
 
 # ----- Prepare test db -----
 
@@ -87,6 +87,11 @@ $expected      = slurp $expected_file;
 $cmd = "( echo '#! mason <<$EOFMARKER' ; cat $payload_file ; echo '$EOFMARKER' ) | netcat -w1 localhost $port";
 $res = `$cmd`;
 is( $res, $expected, "mason 1");
+
+# EOF marker with whitespace
+$cmd = "( echo '#! mason << $EOFMARKER' ; cat $payload_file ; echo '$EOFMARKER' ) | netcat -w1 localhost $port";
+$res = `$cmd`;
+is( $res, $expected, "mason eof marker with whitespace");
 
 # ____________________ CLOSE SERVER ____________________
 
