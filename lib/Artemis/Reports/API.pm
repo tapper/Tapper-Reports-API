@@ -19,8 +19,17 @@ sub process_request
         my $cmdline = <STDIN>;
         my ($cmd, @args) = _split_cmdline( $cmdline );
         no strict 'refs';
-        my $handle = "handle_$cmd";
+        $cmd       //= "TAP";
+        my $handle   = "handle_$cmd";
         $self->$handle (@args);
+}
+
+sub handle_TAP
+{
+        my ($self, @args) = @_;
+
+        #print STDERR "Unrecognized input, interpret as TAP, but: TAP reporting via this API not yet implemented\n";
+        print STDERR "Unrecognized input.\n";
 }
 
 sub handle_upload
