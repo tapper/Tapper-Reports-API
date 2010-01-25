@@ -4,7 +4,7 @@ use 5.010;
 use strict;
 use warnings;
 
-our $VERSION = '2.010016';
+our $VERSION = '2.010019';
 
 use parent 'Net::Server::Fork';
 
@@ -67,7 +67,7 @@ sub handle_mason
         my %args = _parse_args(@args[0..$#args-1]);
 
         # unite '<<' and EOFMARKER when whitespace separated, in order to fix confusion
-        $args[-2] .= pop @args if $args[-2] eq '<<';
+        $args[-2] .= pop @args if $args[-2] && $args[-2] eq '<<';
 
         my $EOFMARKER;
         $EOFMARKER = $1 if $args[-1] =~ /<<(.*)/;

@@ -17,8 +17,6 @@ use Test::Fixture::DBIC::Schema;
 use Artemis::Reports::API::Daemon;
 use File::Slurp 'slurp';
 
-plan tests => 4;
-
 # ----- Prepare test db -----
 
 # -----------------------------------------------------------------------------------------------------------------
@@ -31,6 +29,10 @@ my $expected_file;
 my $grace_period = 5;
 my $expected;
 my $filecontent;
+
+my $netcat = `if which netcat > /dev/null 2>&1 ; then echo netcat ; else echo nc ; fi`;
+chomp $netcat;
+
 
 # ____________________ START SERVER ____________________
 
@@ -59,7 +61,7 @@ my $reportsdb_schema = Artemis::Schema::ReportsDB->connect($dsn,
                                                            }
                                                           );
 
-my $cmd = "( echo '#! upload 23 $payload_file' ; cat $payload_file ) | netcat -w1 localhost $port";
+my $cmd = "( echo '#! upload 23 $payload_file' ; cat $payload_file ) | $netcat -w1 localhost $port";
 my $res = `$cmd`;
 
 # Check DB content
@@ -84,12 +86,12 @@ $payload_file  = "t/perfmon_tests_planned.mas";
 $expected_file = "t/perfmon_tests_planned.expected";
 $expected      = slurp $expected_file;
 
-$cmd = "( echo '#! mason <<$EOFMARKER' ; cat $payload_file ; echo '$EOFMARKER' ) | netcat -w1 localhost $port";
+$cmd = "( echo '#! mason <<$EOFMARKER' ; cat $payload_file ; echo '$EOFMARKER' ) | $netcat -w1 localhost $port";
 $res = `$cmd`;
 is( $res, $expected, "mason 1");
 
 # EOF marker with whitespace
-$cmd = "( echo '#! mason << $EOFMARKER' ; cat $payload_file ; echo '$EOFMARKER' ) | netcat -w1 localhost $port";
+$cmd = "( echo '#! mason << $EOFMARKER' ; cat $payload_file ; echo '$EOFMARKER' ) | $netcat -w1 localhost $port";
 $res = `$cmd`;
 is( $res, $expected, "mason eof marker with whitespace");
 
@@ -98,3 +100,4 @@ is( $res, $expected, "mason eof marker with whitespace");
 #sleep 60;
 $api->run("stop");
 
+done_testing();
