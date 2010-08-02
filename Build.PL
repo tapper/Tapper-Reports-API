@@ -21,6 +21,7 @@ my $builder = Module::Build->new
                   'Artemis::Config'            => '2.010004',
                   'Artemis::Schema'            => '2.010028',
                   'Artemis::Reports::DPath'    => '2.010015',
+	          'Data::Structure::Util'      => 0,
                   'Method::Signatures'         => 0,
                   'Moose'                      => "0.72",
                   'Net::Server'                => 0,
