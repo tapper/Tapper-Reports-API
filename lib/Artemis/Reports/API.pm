@@ -32,6 +32,30 @@ sub handle_TAP
         print STDERR "Unrecognized input.\n";
 }
 
+sub get_payload
+{
+        my ($self, @args) = @_;
+
+        # unite '<<' and EOFMARKER when whitespace separated, in order to fix confusion
+        $args[-2] .= pop @args if $args[-2] && $args[-2] eq '<<';
+
+        my $EOFMARKER;
+        $EOFMARKER = $1 if $args[-1] =~ /<<(.*)/;
+        return '' unless $EOFMARKER;
+
+        # ----- read template -----
+
+        my $line;
+        my $payload = '';
+        while ($line = <STDIN>)
+        {
+                last if ($line =~ /^$EOFMARKER\s*$/);
+                $payload .= $line;
+        }
+        return $payload;
+
+}
+
 sub handle_upload
 {
         my ($self, $report_id, $filename, $contenttype) = @_;
@@ -65,25 +89,7 @@ sub handle_mason
         my ($self, @args) = @_;
 
         my %args = _parse_args(@args[0..$#args-1]);
-
-        # unite '<<' and EOFMARKER when whitespace separated, in order to fix confusion
-        $args[-2] .= pop @args if $args[-2] && $args[-2] eq '<<';
-
-        my $EOFMARKER;
-        $EOFMARKER = $1 if $args[-1] =~ /<<(.*)/;
-        return '' unless $EOFMARKER;
-
-        # ----- read template -----
-
-        my $line;
-        my $payload = '';
-        while ($line = <STDIN>)
-        {
-                last if ($line =~ /^$EOFMARKER\s*$/);
-                $payload .= $line;
-        }
-
-        # ----- compile template -----
+        my $payload = $self->get_payload(@args);
 
         my $mason  = new Artemis::Reports::DPath::Mason(debug => $args{debug} ? 1 : 0);
         my $answer = $mason->render(template => $payload);
