@@ -11,6 +11,7 @@ author   'OSRC SysInt Team <osrc-sysint@elbe.amd.com>';
 build_requires 'Cwd'                         => 0;
 build_requires 'Test::More'                  => 0;
 build_requires 'Test::Deep'                  => 0;
+build_requires 'Test::Perl::Critic'          => 0;
 build_requires 'Artemis::Test'               => '2.010004';
 build_requires 'Test::Fixture::DBIC::Schema' => 0;
 
