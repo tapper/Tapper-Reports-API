@@ -56,6 +56,19 @@ sub get_payload
 
 }
 
+sub handle_tt
+{
+        my ($self, @args) = @_;
+
+        my %args = _parse_args(@args[0..$#args-1]);
+        my $payload = $self->get_payload(@args);
+
+        my $tt  = new Artemis::Reports::DPath::TT(debug => $args{debug} ? 1 : 0);
+        my $answer = $tt->render(template => $payload);
+
+        print $answer;
+}
+
 sub handle_upload
 {
         my ($self, $report_id, $filename, $contenttype) = @_;
