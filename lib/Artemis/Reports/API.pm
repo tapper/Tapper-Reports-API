@@ -59,6 +59,7 @@ sub get_payload
 sub handle_tt
 {
         my ($self, @args) = @_;
+        do { print "Template Toolkit is not enabled\n"; return } unless Artemis::Config->subconfig->{reports_enable_tt};
 
         my %args = _parse_args(@args[0..$#args-1]);
         my $payload = $self->get_payload(@args);
@@ -100,6 +101,7 @@ sub _parse_args {
 sub handle_mason
 {
         my ($self, @args) = @_;
+        do { print "Mason is not enabled\n"; return } unless Artemis::Config->subconfig->{reports_enable_mason};
 
         my %args = _parse_args(@args[0..$#args-1]);
         my $payload = $self->get_payload(@args);
