@@ -18,7 +18,7 @@ sub process_request
 
         my $cmdline = <STDIN>;
         my ($cmd, @args) = _split_cmdline( $cmdline );
-        no strict 'refs';
+        no strict 'refs'; ## no critic (ProhibitNoStrict)
         $cmd       //= "TAP";
         my $handle   = "handle_$cmd";
         $self->$handle (@args);
