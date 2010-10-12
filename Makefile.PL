@@ -6,7 +6,7 @@ use inc::Module::Install;
 name     'Artemis-Reports-API';
 all_from 'lib/Artemis/Reports/API.pm';
 author   'OSRC SysInt Team <osrc-sysint@elbe.amd.com>';
-
+license  'freebsd';
 
 build_requires 'Cwd'                         => 0;
 build_requires 'Test::More'                  => 0;
