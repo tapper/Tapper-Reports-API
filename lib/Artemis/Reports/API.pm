@@ -4,11 +4,12 @@ use 5.010;
 use strict;
 use warnings;
 
-our $VERSION = '2.010022';
+our $VERSION = '2.010023';
 
 use parent 'Net::Server::Fork';
 
 use Artemis::Reports::DPath::Mason;
+use Artemis::Reports::DPath::TT;
 use Artemis::Model 'model';
 use Data::Dumper;
 
