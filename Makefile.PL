@@ -26,4 +26,6 @@ requires 'Moose'                      => "0.72";
 requires 'Net::Server'                => 0;
 requires 'MooseX::Daemonize'          => "0.08";
 
+install_script glob('bin/*');
+
 WriteAll;
