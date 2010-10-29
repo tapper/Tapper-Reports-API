@@ -6,7 +6,6 @@ use strict;
 use warnings;
 
 use Artemis::Reports::API;
-use Method::Signatures;
 use Moose;
 
 with 'MooseX::Daemonize';
@@ -24,8 +23,10 @@ after start => sub {
                    }
 ;
 
-method initialize_server
+sub initialize_server
 {
+        my $self = shift;
+        
         my $EUID = `id -u`; chomp $EUID;
         my $EGID = `id -g`; chomp $EGID;
         Artemis::Reports::API->run(
@@ -39,8 +40,10 @@ method initialize_server
 }
 ;
 
-method run
+sub run
 {
+        my $self = shift;
+
         my ($command) = @ARGV ? @ARGV : @_;
         return unless $command && grep /^$command$/, qw(start status restart stop);
         $self->$command;

@@ -21,7 +21,6 @@ requires 'Artemis::Config'            => '2.010004';
 requires 'Artemis::Schema'            => '2.010028';
 requires 'Artemis::Reports::DPath'    => '2.010015';
 requires 'Data::Structure::Util'      => 0;
-requires 'Method::Signatures'         => 0;
 requires 'Moose'                      => "0.72";
 requires 'Net::Server'                => 0;
 requires 'MooseX::Daemonize'          => "0.08";
