@@ -77,6 +77,21 @@ eval {
         is( $filecontent, $expected, "upload");
 };
 
+# ____________________ DOWNLOAD ____________________
+
+# Client communication
+
+# ----- depends on upload just before -----
+
+$expected = slurp $payload_file;
+my $sock = IO::Socket::INET->new( PeerAddr => 'localhost', PeerPort => $port, Proto => 'tcp', ReuseAddr => 1) or die $!;
+is(ref($sock), 'IO::Socket::INET', "socket created");
+my $success = $sock->print( "#! download 23 $payload_file\n" );
+{ local $/;
+  $res = <$sock>;
+}
+close $sock;
+is($res, $expected, "same file downloaded");
 
 # ____________________ MASON ____________________
 
