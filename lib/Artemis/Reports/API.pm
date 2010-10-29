@@ -33,6 +33,19 @@ sub handle_TAP
         print STDERR "Unrecognized input.\n";
 }
 
+sub handle_download
+{
+        my ($self, $report_id, $filename) = @_;
+
+        my $reportfile =
+         model('ReportsDB')
+          ->resultset('ReportFile')
+           ->search ({ report_id => $report_id,
+                       filename  => $filename })
+            ->first;
+        print $reportfile->filecontent if $reportfile->report_id;
+}
+
 sub get_payload
 {
         my ($self, @args) = @_;
