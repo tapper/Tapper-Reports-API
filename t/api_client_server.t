@@ -12,6 +12,7 @@ BEGIN {
 use Cwd;
 use Test::More;
 use Data::Dumper;
+use Artemis::Config;
 use Artemis::Schema::TestTools;
 use Test::Fixture::DBIC::Schema;
 use Artemis::Reports::API::Daemon;
@@ -23,7 +24,8 @@ use File::Slurp 'slurp';
 construct_fixture( schema  => reportsdb_schema, fixture => 't/fixtures/reportsdb/report.yml' );
 # -----------------------------------------------------------------------------------------------------------------
 
-my $port = 54321;
+my $port = Artemis::Config->subconfig->{report_api_port};
+
 my $payload_file = 't/test_payload.txt';
 my $expected_file;
 my $grace_period = 5;
@@ -100,14 +102,22 @@ my $EOFMARKER  = "MASONTEMPLATE".$$;
 $payload_file  = "t/perfmon_tests_planned.mas";
 $expected_file = "t/perfmon_tests_planned.expected";
 $expected      = slurp $expected_file;
+$sock = IO::Socket::INET->new( PeerAddr => 'localhost', PeerPort => $port, Proto => 'tcp', ReuseAddr => 1) or die $!;
+# EOF marker with no whitespace after "<<"
+$success = $sock->print( "#! mason <<$EOFMARKER\n".slurp($payload_file)."$EOFMARKER\n" );
+{ local $/;
+  $res = <$sock>;
+}
+close $sock;
+is( $res, $expected, "mason eof marker with no whitespace");
 
-$cmd = "( echo '#! mason <<$EOFMARKER' ; cat $payload_file ; echo '$EOFMARKER' ) | $netcat -w1 localhost $port";
-$res = `$cmd`;
-is( $res, $expected, "mason 1");
-
-# EOF marker with whitespace
-$cmd = "( echo '#! mason << $EOFMARKER' ; cat $payload_file ; echo '$EOFMARKER' ) | $netcat -w1 localhost $port";
-$res = `$cmd`;
+$sock = IO::Socket::INET->new( PeerAddr => 'localhost', PeerPort => $port, Proto => 'tcp', ReuseAddr => 1) or die $!;
+# EOF marker with whitespace after "<<"
+$success = $sock->print( "#! mason << $EOFMARKER\n".slurp($payload_file)."$EOFMARKER\n" );
+{ local $/;
+  $res = <$sock>;
+}
+close $sock;
 is( $res, $expected, "mason eof marker with whitespace");
 
 # ____________________ CLOSE SERVER ____________________
