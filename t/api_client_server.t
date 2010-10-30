@@ -26,15 +26,16 @@ construct_fixture( schema  => reportsdb_schema, fixture => 't/fixtures/reportsdb
 
 my $port = Artemis::Config->subconfig->{report_api_port};
 
+my $EOFMARKER    = "MASONTEMPLATE".$$;
 my $payload_file = 't/test_payload.txt';
+my $payload;
 my $expected_file;
 my $grace_period = 5;
 my $expected;
 my $filecontent;
-
-my $netcat = `if which netcat > /dev/null 2>&1 ; then echo netcat ; else echo nc ; fi`;
-chomp $netcat;
-
+my $res;
+my $sock;
+my $success;
 
 # ____________________ START SERVER ____________________
 
@@ -63,8 +64,10 @@ my $reportsdb_schema = Artemis::Schema::ReportsDB->connect($dsn,
                                                            }
                                                           );
 
-my $cmd = "( echo '#! upload 23 $payload_file' ; cat $payload_file ) | $netcat -w1 localhost $port";
-my $res = `$cmd`;
+$payload    = slurp $payload_file;
+$sock = IO::Socket::INET->new( PeerAddr => 'localhost', PeerPort => $port, Proto => 'tcp', ReuseAddr => 1) or die $!;
+$success = $sock->print( "#! upload 23 $payload_file\n".$payload );
+close $sock;
 
 # Check DB content
 
@@ -86,37 +89,30 @@ eval {
 # ----- depends on upload just before -----
 
 $expected = slurp $payload_file;
-my $sock = IO::Socket::INET->new( PeerAddr => 'localhost', PeerPort => $port, Proto => 'tcp', ReuseAddr => 1) or die $!;
+$sock = IO::Socket::INET->new( PeerAddr => 'localhost', PeerPort => $port, Proto => 'tcp', ReuseAddr => 1) or die $!;
 is(ref($sock), 'IO::Socket::INET', "socket created");
-my $success = $sock->print( "#! download 23 $payload_file\n" );
-{ local $/;
-  $res = <$sock>;
-}
+$success = $sock->print( "#! download 23 $payload_file\n" );
+{ local $/; $res = <$sock> }
 close $sock;
 is($res, $expected, "same file downloaded");
 
 # ____________________ MASON ____________________
 
 # Client communication
-my $EOFMARKER  = "MASONTEMPLATE".$$;
 $payload_file  = "t/perfmon_tests_planned.mas";
 $expected_file = "t/perfmon_tests_planned.expected";
 $expected      = slurp $expected_file;
 $sock = IO::Socket::INET->new( PeerAddr => 'localhost', PeerPort => $port, Proto => 'tcp', ReuseAddr => 1) or die $!;
 # EOF marker with no whitespace after "<<"
 $success = $sock->print( "#! mason <<$EOFMARKER\n".slurp($payload_file)."$EOFMARKER\n" );
-{ local $/;
-  $res = <$sock>;
-}
+{ local $/; $res = <$sock> }
 close $sock;
 is( $res, $expected, "mason eof marker with no whitespace");
 
 $sock = IO::Socket::INET->new( PeerAddr => 'localhost', PeerPort => $port, Proto => 'tcp', ReuseAddr => 1) or die $!;
 # EOF marker with whitespace after "<<"
 $success = $sock->print( "#! mason << $EOFMARKER\n".slurp($payload_file)."$EOFMARKER\n" );
-{ local $/;
-  $res = <$sock>;
-}
+{ local $/; $res = <$sock> }
 close $sock;
 is( $res, $expected, "mason eof marker with whitespace");
 
