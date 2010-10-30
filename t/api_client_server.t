@@ -82,19 +82,39 @@ eval {
         is( $filecontent, $expected, "upload");
 };
 
+# ------------------------------ upload again, slightly different payload --------------------
+
+$sock = IO::Socket::INET->new( PeerAddr => 'localhost', PeerPort => $port, Proto => 'tcp', ReuseAddr => 1) or die $!;
+$success = $sock->print( "#! upload 23 $payload_file\n".$payload."ZOMTEC" );
+close $sock;
+
+# Check DB content
+
+# wait, because the server is somewhat slow until the upload is visible in DB
+sleep $grace_period;
+
+is( $reportsdb_schema->resultset('ReportFile')->count, 2,  "newer reportfile count" );
+
 # ____________________ DOWNLOAD ____________________
 
 # Client communication
 
-# ----- depends on upload just before -----
-
+# ----- download first upload before -----
 $expected = slurp $payload_file;
 $sock = IO::Socket::INET->new( PeerAddr => 'localhost', PeerPort => $port, Proto => 'tcp', ReuseAddr => 1) or die $!;
-is(ref($sock), 'IO::Socket::INET', "socket created");
 $success = $sock->print( "#! download 23 $payload_file\n" );
 { local $/; $res = <$sock> }
 close $sock;
 is($res, $expected, "same file downloaded");
+
+# ---------- check second uploaded file ----------
+$expected  = slurp $payload_file;
+$expected .= "ZOMTEC";
+$sock = IO::Socket::INET->new( PeerAddr => 'localhost', PeerPort => $port, Proto => 'tcp', ReuseAddr => 1) or die $!;
+$success = $sock->print( "#! download 23 $payload_file 1\n" );
+{ local $/; $res = <$sock> }
+close $sock;
+is($res, $expected, "second file downloaded");
 
 # ____________________ MASON ____________________
 
