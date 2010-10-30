@@ -35,14 +35,17 @@ sub handle_TAP
 
 sub handle_download
 {
-        my ($self, $report_id, $filename) = @_;
+        my ($self, $report_id, $filename, $index) = @_;
 
-        my $reportfile =
+        $index ||= 0;
+        say STDERR "# index: $index";
+        my ($reportfile) =
          model('ReportsDB')
           ->resultset('ReportFile')
            ->search ({ report_id => $report_id,
-                       filename  => $filename })
-            ->first;
+                       filename  => $filename },
+                     { order_by  => 'id' })
+            ->slice($index, $index);
         print $reportfile->filecontent if $reportfile->report_id;
 }
 
