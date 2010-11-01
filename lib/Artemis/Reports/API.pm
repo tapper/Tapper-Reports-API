@@ -38,7 +38,6 @@ sub handle_download
         my ($self, $report_id, $filename, $index) = @_;
 
         $index ||= 0;
-        say STDERR "# index: $index";
         my ($reportfile) =
          model('ReportsDB')
           ->resultset('ReportFile')
