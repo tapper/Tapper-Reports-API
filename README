@@ -1,6 +1,6 @@
-Artemis-Reports-API
+Tapper-Reports-API
 
-Artemis Remote API
+Tapper Remote API
 
 INSTALLATION
 
@@ -16,7 +16,7 @@ SUPPORT AND DOCUMENTATION
 After installing, you can find documentation for this module with the
 perldoc command.
 
-    perldoc Artemis::Reports::API
+    perldoc Tapper::Reports::API
 
 
 COPYRIGHT AND LICENCE

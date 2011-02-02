@@ -11,7 +11,7 @@ BEGIN {
 use Test::More;
 use Test::Deep;
 use Data::Dumper;
-use Artemis::Reports::API;
+use Tapper::Reports::API;
 
 my @cmdlines = (
                 # trailing spaces matter!
@@ -41,7 +41,7 @@ plan tests => 4*@cmdlines + 4*@cmdlines2 + 1;
 
 my $i = 0;
 foreach my $cmdline (@cmdlines) {
-        my ($cmd, $id, $file, $contenttype) = Artemis::Reports::API::_split_cmdline( $cmdline );
+        my ($cmd, $id, $file, $contenttype) = Tapper::Reports::API::_split_cmdline( $cmdline );
 
         is($cmd,         "upload",                   "cmd $i");
         is($id,          "552",                      "id $i");
@@ -54,7 +54,7 @@ foreach my $cmdline (@cmdlines) {
 # -- same but without optional content type --
 
 foreach my $cmdline (@cmdlines2) {
-        my ($cmd, $id, $file, $contenttype) = Artemis::Reports::API::_split_cmdline( $cmdline );
+        my ($cmd, $id, $file, $contenttype) = Tapper::Reports::API::_split_cmdline( $cmdline );
 
         is($cmd,         "upload",                   "cmd $i");
         is($id,          "552",                      "id $i");
@@ -64,7 +64,7 @@ foreach my $cmdline (@cmdlines2) {
         $i++;
 }
 
-my %args = Artemis::Reports::API::_parse_args( qw( debug=1 -affe=zomtec --foo=bar ) );
+my %args = Tapper::Reports::API::_parse_args( qw( debug=1 -affe=zomtec --foo=bar ) );
 cmp_deeply(\%args, {
                     debug => 1,
                     affe  => "zomtec",

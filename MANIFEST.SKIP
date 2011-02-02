@@ -1,11 +1,11 @@
-Artemis-Reports-API-*.*.tar.gz
-^Artemis-Reports-API-*.*$
+Tapper-Reports-API-*.*.tar.gz
+^Tapper-Reports-API-*.*$
 _build
 blib
 ^Build$
 MANIFEST.bak
-test-artemis-reports-api-daemon-test.pid
-test-artemis_reports_api_daemon_stderr.log
-test-artemis_reports_api_daemon_stdout.log
+test-tapper-reports-api-daemon-test.pid
+test-tapper_reports_api_daemon_stderr.log
+test-tapper_reports_api_daemon_stdout.log
 
 ^MYMETA.yml$

@@ -1,4 +1,4 @@
-package Artemis::Reports::API;
+package Tapper::Reports::API;
 
 use 5.010;
 use strict;
@@ -8,9 +8,9 @@ our $VERSION = '2.010025';
 
 use parent 'Net::Server::Fork';
 
-use Artemis::Reports::DPath::Mason;
-use Artemis::Reports::DPath::TT;
-use Artemis::Model 'model';
+use Tapper::Reports::DPath::Mason;
+use Tapper::Reports::DPath::TT;
+use Tapper::Model 'model';
 use Data::Dumper;
 
 sub process_request
@@ -75,12 +75,12 @@ sub get_payload
 sub handle_tt
 {
         my ($self, @args) = @_;
-        do { print "Template Toolkit is not enabled\n"; return } unless Artemis::Config->subconfig->{reports_enable_tt};
+        do { print "Template Toolkit is not enabled\n"; return } unless Tapper::Config->subconfig->{reports_enable_tt};
 
         my %args = _parse_args(@args[0..$#args-1]);
         my $payload = $self->get_payload(@args);
 
-        my $tt  = new Artemis::Reports::DPath::TT(debug => $args{debug} ? 1 : 0);
+        my $tt  = new Tapper::Reports::DPath::TT(debug => $args{debug} ? 1 : 0);
         my $answer = $tt->render(template => $payload);
 
         print $answer;
@@ -117,12 +117,12 @@ sub _parse_args {
 sub handle_mason
 {
         my ($self, @args) = @_;
-        do { print "Mason is not enabled\n"; return } unless Artemis::Config->subconfig->{reports_enable_mason};
+        do { print "Mason is not enabled\n"; return } unless Tapper::Config->subconfig->{reports_enable_mason};
 
         my %args = _parse_args(@args[0..$#args-1]);
         my $payload = $self->get_payload(@args);
 
-        my $mason  = new Artemis::Reports::DPath::Mason(debug => $args{debug} ? 1 : 0);
+        my $mason  = new Tapper::Reports::DPath::Mason(debug => $args{debug} ? 1 : 0);
         my $answer = $mason->render(template => $payload);
 
         print $answer;
@@ -148,13 +148,13 @@ sub post_process_request_hook
 
 =head1 NAME
 
-Artemis::Reports::API - A simple remote network API. First line declares language. Following lines are content.
+Tapper::Reports::API - A simple remote network API. First line declares language. Following lines are content.
 
 
 =head1 SYNOPSIS
 
-    use Artemis::Reports::API;
-    my $foo = Artemis::Reports::API->new();
+    use Tapper::Reports::API;
+    my $foo = Tapper::Reports::API->new();
     ...
 
 =head1 AUTHOR
@@ -170,4 +170,4 @@ This program is released under the following license: restrictive
 
 =cut
 
-1; # End of Artemis::Reports::API
+1; # End of Tapper::Reports::API

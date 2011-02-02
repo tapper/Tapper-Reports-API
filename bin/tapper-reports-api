@@ -3,12 +3,12 @@
 use strict;
 use warnings;
 
-use Artemis::Reports::API;
+use Tapper::Reports::API;
 
 my $EUID = `id -u`; chomp $EUID;
 my $EGID = `id -g`; chomp $EGID;
 
-Artemis::Reports::API->run(
+Tapper::Reports::API->run(
                            port         => 7358,
                            log_level    => 2,
                            max_servers  => 2,

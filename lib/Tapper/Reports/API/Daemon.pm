@@ -1,11 +1,11 @@
-package Artemis::Reports::API::Daemon;
+package Tapper::Reports::API::Daemon;
 
 use 5.010;
 
 use strict;
 use warnings;
 
-use Artemis::Reports::API;
+use Tapper::Reports::API;
 use Moose;
 
 with 'MooseX::Daemonize';
@@ -29,7 +29,7 @@ sub initialize_server
         
         my $EUID = `id -u`; chomp $EUID;
         my $EGID = `id -g`; chomp $EGID;
-        Artemis::Reports::API->run(
+        Tapper::Reports::API->run(
                                    port         => $self->port,
                                    log_level    => 2,
                                    max_servers  => 10,

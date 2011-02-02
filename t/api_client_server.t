@@ -12,10 +12,10 @@ BEGIN {
 use Cwd;
 use Test::More;
 use Data::Dumper;
-use Artemis::Config;
-use Artemis::Schema::TestTools;
+use Tapper::Config;
+use Tapper::Schema::TestTools;
 use Test::Fixture::DBIC::Schema;
-use Artemis::Reports::API::Daemon;
+use Tapper::Reports::API::Daemon;
 use File::Slurp 'slurp';
 
 # ----- Prepare test db -----
@@ -24,7 +24,7 @@ use File::Slurp 'slurp';
 construct_fixture( schema  => reportsdb_schema, fixture => 't/fixtures/reportsdb/report.yml' );
 # -----------------------------------------------------------------------------------------------------------------
 
-my $port = Artemis::Config->subconfig->{report_api_port};
+my $port = Tapper::Config->subconfig->{report_api_port};
 
 my $EOFMARKER    = "MASONTEMPLATE".$$;
 my $payload_file = 't/test_payload.txt';
@@ -39,12 +39,12 @@ my $success;
 
 # ____________________ START SERVER ____________________
 
-$ENV{MX_DAEMON_STDOUT} = getcwd."/test-artemis_reports_api_daemon_stdout.log";
-$ENV{MX_DAEMON_STDERR} = getcwd."/test-artemis_reports_api_daemon_stderr.log";
+$ENV{MX_DAEMON_STDOUT} = getcwd."/test-tapper_reports_api_daemon_stdout.log";
+$ENV{MX_DAEMON_STDERR} = getcwd."/test-tapper_reports_api_daemon_stderr.log";
 
-my $api = new Artemis::Reports::API::Daemon (
+my $api = new Tapper::Reports::API::Daemon (
                                              basedir => getcwd,
-                                             pidfile => getcwd.'/test-artemis-reports-api-daemon-test.pid',
+                                             pidfile => getcwd.'/test-tapper-reports-api-daemon-test.pid',
                                              port    => $port,
                                             );
 $api->run("start");
@@ -55,10 +55,10 @@ sleep $grace_period;
 
 # Client communication
 
-my $dsn = Artemis::Config->subconfig->{test}{database}{ReportsDB}{dsn};
-my $reportsdb_schema = Artemis::Schema::ReportsDB->connect($dsn,
-                                                           Artemis::Config->subconfig->{test}{database}{ReportsDB}{username},
-                                                           Artemis::Config->subconfig->{test}{database}{ReportsDB}{password},
+my $dsn = Tapper::Config->subconfig->{test}{database}{ReportsDB}{dsn};
+my $reportsdb_schema = Tapper::Schema::ReportsDB->connect($dsn,
+                                                           Tapper::Config->subconfig->{test}{database}{ReportsDB}{username},
+                                                           Tapper::Config->subconfig->{test}{database}{ReportsDB}{password},
                                                            {
                                                             ignore_version => 1
                                                            }

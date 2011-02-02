@@ -1,0 +1,15 @@
+#! /usr/bin/env perl
+
+use strict;
+use warnings;
+
+use Tapper::Reports::API::Daemon;
+
+$ENV{MX_DAEMON_STDOUT} ||= '/tmp/tapper_reports_api_daemon_devel_stdout.log';
+$ENV{MX_DAEMON_STDERR} ||= '/tmp/tapper_reports_api_daemon_devel_stderr.log';
+
+my $api = new Tapper::Reports::API::Daemon
+    (
+     pidfile => '/tmp/tapper-reports-api-daemon.pid'
+    );
+$api->run;
