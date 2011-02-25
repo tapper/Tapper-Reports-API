@@ -1,3 +1,4 @@
+^.git
 Tapper-Reports-API-*.*.tar.gz
 ^Tapper-Reports-API-*.*$
 _build
