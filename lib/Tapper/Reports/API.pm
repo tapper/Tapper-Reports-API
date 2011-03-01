@@ -148,7 +148,7 @@ sub post_process_request_hook
 
 =head1 NAME
 
-Tapper::Reports::API - A simple remote network API. First line declares language. Following lines are content.
+Tapper::Reports::API - Tapper - Remote network API
 
 
 =head1 SYNOPSIS
