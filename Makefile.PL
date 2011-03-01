@@ -5,7 +5,7 @@ use inc::Module::Install;
 
 name     'Tapper-Reports-API';
 all_from 'lib/Tapper/Reports/API.pm';
-author   'OSRC SysInt Team <osrc-sysint@elbe.amd.com>';
+author   'AMD OSRC Tapper Team <tapper@amd64.com>';
 license  'freebsd';
 
 build_requires 'Cwd'                         => 0;
