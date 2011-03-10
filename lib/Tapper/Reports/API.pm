@@ -148,7 +148,7 @@ sub post_process_request_hook
 
 =head1 NAME
 
-Tapper::Reports::API - Tapper - Remote network API
+Tapper::Reports::API - Tapper - Remote network API for result evaluation
 
 
 =head1 SYNOPSIS
