@@ -29,4 +29,7 @@ requires 'MooseX::Daemonize'          => "0.08";
 
 install_script glob('bin/*');
 
+repository 'git://github.com/amd/Tapper-Reports-API.git';
+bugtracker 'http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Tapper-Reports-API';
+
 WriteAll;
