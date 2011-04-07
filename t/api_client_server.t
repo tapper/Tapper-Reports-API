@@ -136,6 +136,18 @@ $success = $sock->print( "#! mason << $EOFMARKER\n".slurp($payload_file)."$EOFMA
 close $sock;
 is( $res, $expected, "mason eof marker with whitespace");
 
+
+# ____________________ TT  ____________________
+
+# Client communication
+$payload_file  = "t/perfmon_tests_planned.tt";
+$sock = IO::Socket::INET->new( PeerAddr => 'localhost', PeerPort => $port, Proto => 'tcp', ReuseAddr => 1) or die $!;
+# EOF marker with no whitespace after "<<"
+$success = $sock->print( "#! tt <<$EOFMARKER\n".slurp($payload_file)."$EOFMARKER\n" );
+{ local $/; $res = <$sock> }
+close $sock;
+is( $res, $expected, "Template toolkit");
+
 # ____________________ CLOSE SERVER ____________________
 
 #sleep 60;
