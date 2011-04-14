@@ -14,6 +14,7 @@ build_requires 'Test::Deep'                  => 0;
 build_requires 'Test::Perl::Critic'          => 0;
 build_requires 'Tapper::Test' => "3.000010";
 build_requires 'Test::Fixture::DBIC::Schema' => 0;
+build_requires 'Test::MockModule';
 
 author_requires 'Module::Install::WriteAll';
 
