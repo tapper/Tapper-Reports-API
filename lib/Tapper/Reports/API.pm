@@ -40,13 +40,13 @@ sub handle_download
         $index ||= 0;
         my %reportfilter = ();
         $reportfilter{report_id} = $report_id if $report_id;
-        my ($reportfile) =
+        my $reportfile =
          model('ReportsDB')
           ->resultset('ReportFile')
            ->search ({ %reportfilter,
                        filename  => $filename },
                      { order_by  => 'id' })
-            ->slice($index, $index);
+            ->slice($index, $index)->first;
         print $reportfile->filecontent if $reportfile->report_id;
 }
 
