@@ -107,6 +107,14 @@ $success = $sock->print( "#! download 23 $payload_file\n" );
 close $sock;
 is($res, $expected, "same file downloaded");
 
+# ----- download first upload before, but via specify no report_id -----
+$expected = slurp $payload_file;
+$sock = IO::Socket::INET->new( PeerAddr => 'localhost', PeerPort => $port, Proto => 'tcp', ReuseAddr => 1) or die $!;
+$success = $sock->print( "#! download 0 $payload_file\n" );
+{ local $/; $res = <$sock> }
+close $sock;
+is($res, $expected, "same file downloaded via report_id 0");
+
 # ---------- check second uploaded file ----------
 $expected  = slurp $payload_file;
 $expected .= "ZOMTEC";
@@ -115,6 +123,12 @@ $success = $sock->print( "#! download 23 $payload_file 1\n" );
 { local $/; $res = <$sock> }
 close $sock;
 is($res, $expected, "second file downloaded");
+
+$sock = IO::Socket::INET->new( PeerAddr => 'localhost', PeerPort => $port, Proto => 'tcp', ReuseAddr => 1) or die $!;
+$success = $sock->print( "#! download 0 $payload_file 1\n" );
+{ local $/; $res = <$sock> }
+close $sock;
+is($res, $expected, "second file downloaded via report_id 0 and slice");
 
 # ____________________ MASON ____________________
 
