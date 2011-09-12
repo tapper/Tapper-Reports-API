@@ -47,7 +47,7 @@ sub handle_download
                        filename  => $filename },
                      { order_by  => 'id' })
             ->slice($index, $index)->first;
-        print $reportfile->filecontent if $reportfile->report_id;
+        print $reportfile->filecontent if $reportfile;
 }
 
 sub get_payload
