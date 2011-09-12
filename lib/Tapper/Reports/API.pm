@@ -38,10 +38,12 @@ sub handle_download
         my ($self, $report_id, $filename, $index) = @_;
 
         $index ||= 0;
+        my %reportfilter = ();
+        $reportfilter{report_id} = $report_id if $report_id;
         my ($reportfile) =
          model('ReportsDB')
           ->resultset('ReportFile')
-           ->search ({ report_id => $report_id,
+           ->search ({ %reportfilter,
                        filename  => $filename },
                      { order_by  => 'id' })
             ->slice($index, $index);
