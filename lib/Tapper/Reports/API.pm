@@ -82,8 +82,11 @@ sub handle_tt
         my %args = _parse_args(@args[0..$#args-1]);
         my $payload = $self->get_payload(@args);
 
-        my $tt  = new Tapper::Reports::DPath::TT(debug => $args{debug} ? 1 : 0);
-        my $answer = $tt->render(template => $payload);
+        my $tt  = Tapper::Reports::DPath::TT->new (
+                                                   debug           => $args{debug}           ? 1 : 0,
+                                                   puresqlabstract => $args{puresqlabstract} ? 1 : 0,
+                                                  );
+          my $answer = $tt->render(template => $payload);
 
         print $answer;
 }
@@ -124,7 +127,10 @@ sub handle_mason
         my %args = _parse_args(@args[0..$#args-1]);
         my $payload = $self->get_payload(@args);
 
-        my $mason  = new Tapper::Reports::DPath::Mason(debug => $args{debug} ? 1 : 0);
+        my $mason  = Tapper::Reports::DPath::Mason->new (
+                                                         debug           => $args{debug}           ? 1 : 0,
+                                                         puresqlabstract => $args{puresqlabstract} ? 1 : 0,
+                                                        );
         my $answer = $mason->render(template => $payload);
 
         print $answer;
