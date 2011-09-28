@@ -38,14 +38,16 @@ sub handle_download
         my ($self, $report_id, $filename, $index) = @_;
 
         $index ||= 0;
+        my $asc_desc = $index < 0 ? '-desc' : '-asc';
+        $index = abs $index;
         my %reportfilter = ();
         $reportfilter{report_id} = $report_id if $report_id;
         my $reportfile =
          model('ReportsDB')
           ->resultset('ReportFile')
            ->search ({ %reportfilter,
-                       filename  => $filename },
-                     { order_by  => 'id' })
+                       filename  => { like => $filename } },
+                     { order_by  => { $asc_desc => 'id' } })
             ->slice($index, $index)->first;
         print $reportfile->filecontent if $reportfile;
 }
