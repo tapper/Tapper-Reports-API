@@ -1,10 +1,9 @@
 package Tapper::Reports::API;
+# ABSTRACT: Tapper - Remote network API for result evaluation
 
 use 5.010;
 use strict;
 use warnings;
-
-our $VERSION = '3.000010';
 
 use parent 'Net::Server::Fork';
 
@@ -152,32 +151,5 @@ sub post_process_request_hook
 {
         my ($self) = @_;
 }
-
-1;
-
-
-=head1 NAME
-
-Tapper::Reports::API - Tapper - Remote network API for result evaluation
-
-
-=head1 SYNOPSIS
-
-    use Tapper::Reports::API;
-    my $foo = Tapper::Reports::API->new();
-    ...
-
-=head1 AUTHOR
-
-AMD OSRC Tapper Team, C<< <tapper at amd64.org> >>
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2008-2011 AMD OSRC Tapper Team, all rights reserved.
-
-This program is released under the following license: freebsd
-
-
-=cut
 
 1; # End of Tapper::Reports::API

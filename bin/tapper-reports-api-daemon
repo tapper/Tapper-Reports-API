@@ -1,4 +1,6 @@
-#! perl
+#! /usr/bin/perl
+# PODNAME: tapper-reports-api-daemon
+# ABSTRACT: cmdline frontend to Tapper::Reports::API::Daemon
 
 use strict;
 use warnings;

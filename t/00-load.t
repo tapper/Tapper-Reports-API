@@ -9,5 +9,3 @@ BEGIN {
 	use_ok( 'Tapper::Reports::API' );
 	use_ok( 'Tapper::Reports::API::Daemon' );
 }
-
-diag( "Testing Tapper::Reports::API $Tapper::Reports::API::VERSION, Perl $], $^X" );
