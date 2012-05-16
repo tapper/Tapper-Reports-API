@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+        - misc bugfixes everywhere
+        - [FEAT] allow pure SQL::Abstract queries in query api
+        - [FEAT] allow search by filename without report
         - big Dist::Zilla roundhouse kick
 
 2011-04-07  Steffen Schwigon  <steffen.schwigon@amd.com>
