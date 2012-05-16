@@ -23,10 +23,16 @@ after start => sub {
                    }
 ;
 
+=head2 initialize_server
+
+Initialize and start daemon according to config.
+
+=cut
+
 sub initialize_server
 {
         my $self = shift;
-        
+
         my $EUID = `id -u`; chomp $EUID;
         my $EGID = `id -g`; chomp $EGID;
         Tapper::Reports::API->run(
@@ -39,6 +45,12 @@ sub initialize_server
                                   );
 }
 ;
+
+=head2 run
+
+Frontend to subcommands: start, status, restart, stop.
+
+=cut
 
 sub run
 {

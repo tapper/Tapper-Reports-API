@@ -12,6 +12,13 @@ use Tapper::Reports::DPath::TT;
 use Tapper::Model 'model';
 use Data::Dumper;
 
+=head2 process_request
+
+Initial hook called on incoming data, reads first line and calls
+respective handler.
+
+=cut
+
 sub process_request
 {
         my ($self) = @_;
@@ -24,6 +31,12 @@ sub process_request
         $self->$handle (@args);
 }
 
+=head2 handle_TAP
+
+Handler for incoming TAP.
+
+=cut
+
 sub handle_TAP
 {
         my ($self, @args) = @_;
@@ -31,6 +44,12 @@ sub handle_TAP
         #print STDERR "Unrecognized input, interpret as TAP, but: TAP reporting via this API not yet implemented\n";
         print STDERR "Unrecognized input.\n";
 }
+
+=head2 handle_download
+
+Handler for download request.
+
+=cut
 
 sub handle_download
 {
@@ -50,6 +69,12 @@ sub handle_download
             ->slice($index, $index)->first;
         print $reportfile->filecontent if $reportfile;
 }
+
+=head2 get_payload
+
+Get the payload of an API request (the stuff after the first line).
+
+=cut
 
 sub get_payload
 {
@@ -75,6 +100,12 @@ sub get_payload
 
 }
 
+=head2 handle_tt
+
+Handler for TT query API requests.
+
+=cut
+
 sub handle_tt
 {
         my ($self, @args) = @_;
@@ -91,6 +122,12 @@ sub handle_tt
 
         print $answer;
 }
+
+=head2 handle_upload
+
+Handler for upload requests.
+
+=cut
 
 sub handle_upload
 {
@@ -120,6 +157,12 @@ sub _parse_args {
         return %args;
 }
 
+=head2 handle_mason
+
+Handler for TT query API requests.
+
+=cut
+
 sub handle_mason
 {
         my ($self, @args) = @_;
@@ -146,6 +189,12 @@ sub _split_cmdline
         shift @list; # no shebang
         return @list;
 }
+
+=head2 post_process_request_hook
+
+Hook called after processing, currrently a no-op.
+
+=cut
 
 sub post_process_request_hook
 {
