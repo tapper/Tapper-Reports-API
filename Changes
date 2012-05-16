@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+4.0.1     2012-05-16
         - misc bugfixes everywhere
         - [FEAT] allow pure SQL::Abstract queries in query api
         - [FEAT] allow search by filename without report
