@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+        - sync with release version
 
 4.0.1     2012-05-16
         - misc bugfixes everywhere
