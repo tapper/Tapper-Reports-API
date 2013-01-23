@@ -8,6 +8,7 @@ use warnings;
 use Tapper::Reports::API;
 use Moose;
 use Tapper::Config;
+use Log::Log4perl;
 
 with 'MooseX::Daemonize';
 
