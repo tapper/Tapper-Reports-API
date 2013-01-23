@@ -7,6 +7,7 @@ use warnings;
 
 use Tapper::Reports::API;
 use Moose;
+use Tapper::Config;
 
 with 'MooseX::Daemonize';
 
@@ -17,6 +18,9 @@ after start => sub {
                     my $self = shift;
 
                     return unless $self->is_daemon;
+
+                    my $logconf = Tapper::Config->subconfig->{files}{log4perl_cfg};
+                    Log::Log4perl->init($logconf);
 
                     $self->initialize_server;
                     $self->server->server_loop;
