@@ -133,15 +133,12 @@ sub handle_upload
 {
         my ($self, $report_id, $filename, $contenttype) = @_;
 
-        my $payload = '';
-        $payload .= $_ while <STDIN>;
-
-        my $reportfile = model('TestrunDB')->resultset('ReportFile')->new({ report_id   => $report_id,
-                                                                            filename    => $filename,
-                                                                            filecontent => $payload,
-                                                                            contenttype => $contenttype || 'plain', # 'application/octet-stream',
-                                                                          });
-        $reportfile->insert;
+        return model('TestrunDB')->resultset('ReportFile')->new({
+                report_id   => $report_id,
+                filename    => $filename,
+                filecontent => do { local $/; <STDIN> },
+                contenttype => $contenttype || 'plain', # 'application/octet-stream',
+        })->insert;
 }
 
 sub _parse_args {
