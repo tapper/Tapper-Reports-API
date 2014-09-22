@@ -21,7 +21,7 @@ use File::Slurp 'slurp';
 # ----- Prepare test db -----
 
 # -----------------------------------------------------------------------------------------------------------------
-construct_fixture( schema  => reportsdb_schema, fixture => 't/fixtures/reportsdb/report.yml' );
+construct_fixture( schema  => testrundb_schema, fixture => 't/fixtures/testrundb/report.yml' );
 # -----------------------------------------------------------------------------------------------------------------
 
 my $port = Tapper::Config->subconfig->{report_api_port};
@@ -55,10 +55,10 @@ sleep $grace_period;
 
 # Client communication
 
-my $dsn = Tapper::Config->subconfig->{test}{database}{ReportsDB}{dsn};
-my $reportsdb_schema = Tapper::Schema::ReportsDB->connect($dsn,
-                                                           Tapper::Config->subconfig->{test}{database}{ReportsDB}{username},
-                                                           Tapper::Config->subconfig->{test}{database}{ReportsDB}{password},
+my $dsn = Tapper::Config->subconfig->{test}{database}{TestrunDB}{dsn};
+my $testrundb_schema = Tapper::Schema::TestrunDB->connect($dsn,
+                                                           Tapper::Config->subconfig->{test}{database}{TestrunDB}{username},
+                                                           Tapper::Config->subconfig->{test}{database}{TestrunDB}{password},
                                                            {
                                                             ignore_version => 1
                                                            }
@@ -74,10 +74,10 @@ close $sock;
 # wait, because the server is somewhat slow until the upload is visible in DB
 sleep $grace_period;
 
-is( $reportsdb_schema->resultset('ReportFile')->count, 1,  "new reportfile count" );
+is( $testrundb_schema->resultset('ReportFile')->count, 1,  "new reportfile count" );
 
 eval {
-        $filecontent = $reportsdb_schema->resultset('ReportFile')->search({})->first->filecontent;
+        $filecontent = $testrundb_schema->resultset('ReportFile')->search({})->first->filecontent;
         $expected    = slurp $payload_file;
         is( $filecontent, $expected, "upload");
 };
@@ -93,7 +93,7 @@ close $sock;
 # wait, because the server is somewhat slow until the upload is visible in DB
 sleep $grace_period;
 
-is( $reportsdb_schema->resultset('ReportFile')->count, 2,  "newer reportfile count" );
+is( $testrundb_schema->resultset('ReportFile')->count, 2,  "newer reportfile count" );
 
 # ____________________ DOWNLOAD ____________________
 

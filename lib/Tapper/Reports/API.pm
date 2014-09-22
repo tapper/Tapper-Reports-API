@@ -61,7 +61,7 @@ sub handle_download
         my %reportfilter = ();
         $reportfilter{report_id} = $report_id if $report_id;
         my $reportfile =
-         model('ReportsDB')
+         model('TestrunDB')
           ->resultset('ReportFile')
            ->search ({ %reportfilter,
                        filename  => { like => $filename } },
@@ -136,7 +136,7 @@ sub handle_upload
         my $payload = '';
         $payload .= $_ while <STDIN>;
 
-        my $reportfile = model('ReportsDB')->resultset('ReportFile')->new({ report_id   => $report_id,
+        my $reportfile = model('TestrunDB')->resultset('ReportFile')->new({ report_id   => $report_id,
                                                                             filename    => $filename,
                                                                             filecontent => $payload,
                                                                             contenttype => $contenttype || 'plain', # 'application/octet-stream',
