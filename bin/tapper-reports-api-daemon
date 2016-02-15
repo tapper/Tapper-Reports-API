@@ -9,11 +9,11 @@ use warnings;
 use Cwd;
 use Tapper::Reports::API::Daemon;
 
-$ENV{MX_DAEMON_STDOUT} ||= '/var/log/tapper_reports_api_daemon_devel_stdout.log';
-$ENV{MX_DAEMON_STDERR} ||= '/var/log/tapper_reports_api_daemon_devel_stderr.log';
+$ENV{MX_DAEMON_STDOUT} ||= '/tmp/tapper_reports_api_daemon_devel_stdout.log';
+$ENV{MX_DAEMON_STDERR} ||= '/tmp/tapper_reports_api_daemon_devel_stderr.log';
 
 my $api = Tapper::Reports::API::Daemon->new(
     basedir => getcwd,
-    pidfile => '/var/run/tapper/tapper-reports-api-daemon.pid',
+    pidfile => '/tmp/tapper/tapper-reports-api-daemon.pid',
 );
 $api->run;
