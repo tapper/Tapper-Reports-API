@@ -164,7 +164,7 @@ Handler for TT query API requests.
 sub handle_mason
 {
         my ($self, @args) = @_;
-        do { print "Mason is not enabled\n"; return } unless Tapper::Config->subconfig->{reports_enable_mason};
+        do { print "Mason is not enabled. Set reports_enable_mason: 1 in ".Tapper::Config->subconfig->{_last_used_tapper_config_file}.".\n"; return } unless Tapper::Config->subconfig->{reports_enable_mason};
 
         my %args = _parse_args(@args[0..$#args-1]);
         my $payload = $self->get_payload(@args);
