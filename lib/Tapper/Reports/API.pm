@@ -139,7 +139,7 @@ sub handle_upload
                 filename    => $filename,
                 filecontent => $s_filecontent,
                 contenttype => $contenttype || 'plain', # 'application/octet-stream',
-        })->insert;
+        })->insert if $s_filecontent;
 }
 
 sub _parse_args {
