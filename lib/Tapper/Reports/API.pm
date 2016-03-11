@@ -134,12 +134,13 @@ sub handle_upload
         my ($self, $report_id, $filename, $contenttype) = @_;
 
         my $s_filecontent = do { local $/; <STDIN> };
+        $s_filecontent ||= ' ';
         return model('TestrunDB')->resultset('ReportFile')->new({
                 report_id   => $report_id,
                 filename    => $filename,
                 filecontent => $s_filecontent,
                 contenttype => $contenttype || 'plain', # 'application/octet-stream',
-        })->insert if $s_filecontent;
+        })->insert;
 }
 
 sub _parse_args {
