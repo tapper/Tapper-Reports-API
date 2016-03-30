@@ -2,3 +2,4 @@
 !.gitignore
 Tapper-Reports-API-*
 Debian_CPANTS.txt
+t/tapper_schema_testrundb_test.sqlite
