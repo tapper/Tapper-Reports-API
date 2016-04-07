@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+        - don't store empty files
 
 5.0.4     2016-03-30
         - more explicit dependencies
