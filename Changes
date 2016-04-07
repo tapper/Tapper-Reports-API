@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+5.0.5     2016-04-07
         - don't store empty files
 
 5.0.4     2016-03-30
